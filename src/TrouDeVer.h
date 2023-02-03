@@ -14,6 +14,7 @@ class TrouDeVer
     static FormeQuad* quad;
     // Partie 1 2 et 3 ... Il manque quelque chose ici pour que ça compile ... indice tout en bas de ce fichier
     // ...
+    FormeSphere* soleil = NULL;
 public:
     TrouDeVer()
         : locillumination(-1), locmonochromacite(-1)
@@ -165,7 +166,7 @@ public:
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         afficherCoins();
 
-        // tracer les distorsions gravitationnelle du trou de ver
+         //tracer les distorsions gravitationnelle du trou de ver
         glEnable(GL_BLEND);
         glEnable(GL_CULL_FACE); glCullFace(GL_BACK); // ne pas afficher les faces arrière
 
@@ -244,23 +245,33 @@ public:
         glEnable(GL_CULL_FACE); glCullFace(GL_BACK); // ne pas afficher les faces arrière
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         
+        
+        
+        
+
+
+
         // partie 1: modifs ici ...
-        // ...
-        //glStencilOp( GLenum sfail, GLenum zfail, GLenum pass );
-        //glStencilFunc( GLenum func, GLint ref, GLuint mask );
-        //afficherParoiZpos(); // paroi en +Z
+        // 
+        //glStencilOp(GL_NEVER, GL_NEVER, GL_NEVER);
+        //glStencilFunc(GL_NEVER, 0, 0xFF);
+        //afficherParois();
+        glEnable(GL_STENCIL_TEST);
+        glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+        glStencilFunc(GL_NEVER, 1, 0xFF);
+        afficherParoiZpos(); // paroi en +Z
 
-        //glStencilFunc( GLenum func, GLint ref, GLuint mask );
-        //afficherParoiXpos(); // paroi en +X
+        glStencilFunc(GL_NEVER, 2, 0xFF);
+        afficherParoiXpos(); // paroi en +X
 
-        //glStencilFunc( GLenum func, GLint ref, GLuint mask );
-        //afficherParoiZneg(); // paroi en -Z
+        glStencilFunc(GL_NEVER, 4, 0xFF);
+        afficherParoiZneg(); // paroi en -Z
 
-        //glStencilFunc( GLenum func, GLint ref, GLuint mask );
-        //afficherParoiXneg(); // paroi en -X
+        glStencilFunc(GL_NEVER, 8, 0xFF);
+        afficherParoiXneg(); // paroi en -X
 
-        // void glStencilFunc( GLenum func, GLint ref, GLuint mask );
-        //afficherParoiYneg(); // paroi en -Y
+        glStencilFunc(GL_NEVER, 16, 0xFF);
+        afficherParoiYneg(); // paroi en -Y
 
         glDisable(GL_CULL_FACE);
 
@@ -269,6 +280,7 @@ public:
         // On fait en sorte que seulement la région du stencil avec des 1,2,4,8 soit tracée
         // (c'est-à-dire seulement la région de lentille)
         // tracer les planetes avec le programme de nuanceur de ce TP
+
         glUseProgram(prog);
         glUniformMatrix4fv(locmatrProj, 1, GL_FALSE, matrProj);
         glUniformMatrix4fv(locmatrVisu, 1, GL_FALSE, matrVisu);
@@ -276,22 +288,29 @@ public:
         glUniform1i(locillumination, Etat::illumination);
         glUniform1i(locmonochromacite, Etat::monochromacite);
 
-        //glStencilOp( GLenum sfail, GLenum zfail, GLenum pass );
-
         // partie 1: modifs ici ...
         // [ au besoin, utiliser : if ( Etat::debug ) glStencilFunc( GL_ALWAYS, 1, 1 ); // pour débogguer ]
         // on trace le contenu de chaque lentille 5 fois
-        //glStencilFunc( GLenum func, GLint ref, GLuint mask );
+        glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+        glStencilFunc(GL_EQUAL , 1, 0xFF);
+        afficherContenu();
+        glStencilFunc(GL_EQUAL, 2, 0xFF);
+        afficherContenu();
+        glStencilFunc(GL_EQUAL, 4, 0xFF);
+        afficherContenu();
+        glStencilFunc(GL_EQUAL, 8, 0xFF);
+        afficherContenu();
+        glStencilFunc(GL_EQUAL, 16, 0xFF);
+        afficherContenu();
         // ...
         //glStencilFunc( GLenum func, GLint ref, GLuint mask );
         // ...
         // etc.
 
-        
+        glDisable(GL_STENCIL_TEST);
         glUseProgram(progBase);
         // afficher les parois du trou de ver
         afficherParois();
-
         // lorsqu'on a passer dans le trou de ver, nous voyons l'ensemble des planètes
         //if (exoplaneteChoisie)  ...
 
@@ -320,7 +339,7 @@ public:
                 glUniformMatrix4fv(locmatrModelBase, 1, GL_FALSE, matrModel);
                 soleil->afficher();
             matrModel.PopMatrix(); glUniformMatrix4fv(locmatrModelBase, 1, GL_FALSE, matrModel);
-
+                
             matrModel.PushMatrix();
                 glVertexAttrib3f(locColor, 0.0, 0.0, 0.0);
                 matrModel.Scale(.5, 0.5, 0.5);

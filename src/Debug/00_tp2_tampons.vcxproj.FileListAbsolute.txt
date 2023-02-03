@@ -1,0 +1,2 @@
+D:\Université\H23\INF2705\TPs\INF2705-TP2\src\Debug\glew32.dll
+D:\Université\H23\INF2705\TPs\INF2705-TP2\src\Debug\00_tp2_tampons.exe
