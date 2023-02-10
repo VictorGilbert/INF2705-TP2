@@ -195,9 +195,12 @@ public:
     void positionnerCamera(int exoplaneteChoisie)
     {
         // partie 2: modifs ici ...
-        //Exoplanete *exoplanete = exoplanetes[exoplaneteChoisie-1];
-        //MatricePipeline mtc = ...
-        //matrVisu.setMatr( ... );
+        Exoplanete *exoplanete = exoplanetes[exoplaneteChoisie-1];
+        MatricePipeline mtc = exoplanete->obtenirMatriceCourante();
+        matrVisu.setMatr(glm::inverse(glm::mat4(mtc)));
+        if (exoplaneteChoisie != 0) {
+            afficherContenu();
+        }
     }
 
     void afficherToutesLesExoplanetes()
@@ -245,11 +248,6 @@ public:
         glEnable(GL_CULL_FACE); glCullFace(GL_BACK); // ne pas afficher les faces arrière
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         
-        
-        
-        
-
-
 
         // partie 1: modifs ici ...
         // 
@@ -291,6 +289,7 @@ public:
         // partie 1: modifs ici ...
         // [ au besoin, utiliser : if ( Etat::debug ) glStencilFunc( GL_ALWAYS, 1, 1 ); // pour débogguer ]
         // on trace le contenu de chaque lentille 5 fois
+        
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
         glStencilFunc(GL_EQUAL , 1, 0xFF);
         afficherContenu();
