@@ -44,6 +44,9 @@ const bool utiliseBlinn = true;
 
 in Attribs {
     vec4 couleur;
+    //vec3 lumiDir;
+    vec3 normale;
+    //, obsVec;
 } AttribsIn;
 
 out vec4 FragColor;
@@ -55,7 +58,11 @@ void main( void )
 
     // Mettre un test bidon afin que l'optimisation du compilateur n'élimine les variable "illumination"
     // et "monochromacite".
+
+
+
     // Vous ENLEVEREZ ce test inutile!
     if ( illumination > 10000 ) FragColor.r += 0.001;
     if ( monochromacite > 10000 ) FragColor.r += 0.001;
+    if (AttribsIn.normale[0] > 1000) FragColor.r += 0.001;
 }
